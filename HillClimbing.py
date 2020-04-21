@@ -32,7 +32,7 @@ def evaluate(right, left, toMove):
     return totalValue, right, left, (cost + returnCost), [returnCost]
 
 
-def hillClimbing(persons, movement, paint, right=[], left=[], total=0):
+def hillClimbing(persons, movement, paint, changeText, right=[], left=[], total=0):
     if len(left) == 0:
         left = persons[:]
     left.sort()
@@ -49,15 +49,23 @@ def hillClimbing(persons, movement, paint, right=[], left=[], total=0):
         nRight = right
         currentCost = cost
         minValue = currentCost
+
+        changeText("value", minValue)
+        paint(toMove, "blue")
+
+        changeText("value", 0)
+        paint(toMove, "white")
+
     else:
         for a in left:
             _ = left[:]
             _.remove(a)
             for b in _:
+                totalValue, cRight, cLeft, totalCost, cReturn = evaluate(right[:], left[:], [a, b])
 
+                changeText("value", totalValue)
                 paint([a, b], "blue")
 
-                totalValue, cRight, cLeft, totalCost, cReturn = evaluate(right[:], left[:], [a, b])
                 if (totalValue < minValue):
                     minValue = totalValue
                     toMove = [a, b]
@@ -66,6 +74,7 @@ def hillClimbing(persons, movement, paint, right=[], left=[], total=0):
                     currentCost = totalCost
                     toReturn = cReturn
 
+                changeText("value", 0)
                 paint([a, b], "white")
 
     print("______MOVE______")
@@ -77,21 +86,27 @@ def hillClimbing(persons, movement, paint, right=[], left=[], total=0):
 
     paint(toMove, "green")
 
-    total = total + currentCost
+    changeText("cost", max(toMove))
+    changeText("total", total + max(toMove))
 
     # Move to the Right
     movement(toMove, "right")
 
+    total = total + currentCost
+
     # Move to the Left
     if len(toReturn) > 0:
+        changeText("cost", min(toReturn))
+        changeText("total", total)
         movement(toReturn, "left")
+        changeText("cost", 0)
 
 
     if sum(nRight) == sum(persons):
         print("______COST______")
         print("COST: ", total)
     else:
-        hillClimbing(persons, movement, paint, nRight, nLeft, total)
+        hillClimbing(persons, movement, paint, changeText, nRight, nLeft, total)
 
 # hillClimbing([5, 10, 60, 70, 8, 4])
 

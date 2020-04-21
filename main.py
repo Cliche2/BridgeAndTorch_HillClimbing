@@ -120,16 +120,50 @@ class PageOne(Frame):
 class PageTwo(Frame):
     personsBox = []
     personsText = []
+    labels = {}
     canvas = None
 
     def frameSleep(self, sec):
         Frame.update(self)
         sleep(sec)
 
-    def createPersons(self):
-        _canvas = Canvas(self, width=300, height=300)
+    def createLabels(self):
+        labelValue = Label(root, text="Valor del Movimiento: 0")
+        labelCost = Label(root, text="Costo Actual: 0")
+        labelTotal = Label(root, text="Costo Total: 0")
+        labelValue.pack(fill=Y)
+        labelCost.pack(fill=Y)
+        labelTotal.pack(fill=Y)
 
-        for i in range(len(persons)):
+        self.labels["value"] = labelValue
+        self.labels["cost"] = labelCost
+        self.labels["total"] = labelTotal
+
+    def changeText(self, label, _value):
+        value = str(_value)
+        text = ""
+        if label == "value":
+            text = "Valor del Movimiento: " + value
+        elif label == "cost":
+            text = "Costo Actual: " + value
+        elif label == "total":
+            text = "Costo Total: " + value
+
+        self.labels[label]["text"] = text
+
+    def createPersons(self):
+        quantity = len(persons)
+        extra = 0
+        if quantity > 9:
+            extra = (int((quantity - 9) / 3) * 30)
+        height = 100 + extra
+        print(height)
+        _canvas = Canvas(self, width=350, height=height)
+
+        _canvas.create_line(100, 15, 220, 15)
+        _canvas.create_line(100, 75, 220, 75)
+
+        for i in range(quantity):
             person = str(persons[i])
             x = 10 + ((i % 3) * 30)
             y = 10 + (int((i / 3)) * 30)
@@ -139,6 +173,7 @@ class PageTwo(Frame):
             self.personsText.append(text)
             _canvas.pack()
         self.canvas = _canvas
+        self.createLabels()
 
     def movement(self, toMove, direction):
         self.frameSleep(1)
@@ -167,7 +202,7 @@ class PageTwo(Frame):
     def setPosition(self, toSet, direction):
         add = 0
         if direction == "right":
-            add = 200
+            add = 240
 
         for _ in toSet:
             index = persons.index(_)
@@ -191,16 +226,10 @@ class PageTwo(Frame):
         Frame.__init__(self, parent)
         self.controller = controller
 
-        def hill():
-            hillClimbing(persons, self.movement, self.paint)
+        def startAlgorithm():
+            hillClimbing(persons, self.movement, self.paint, self.changeText)
 
-        # def movement(*args):
-        #     canvas.move(cube, 10, 0)
-        #     canvas.move(text, 10, 0)
-        #     canvas.move(cube, 10, 0)
-        #     canvas.move(text, 10, 0)
-
-        buttonCreate = Button(self, text="Start", command=hill)
+        buttonCreate = Button(self, text="Start", command=startAlgorithm)
         buttonCreate.pack()
 
 
