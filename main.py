@@ -21,11 +21,6 @@ class MainRoot(Tk):
     def __init__(self, *args, **kwargs):
         Tk.__init__(self, *args, **kwargs)
 
-        # self.title_font = tkfont.Font(family='Helvetica', size=18, weight="bold", slant="italic")
-
-        # the container is where we'll stack a bunch of frames
-        # on top of each other, then the one we want visible
-        # will be raised above the others
         container = Frame(self)
         container.pack(side="top", fill="both", expand=True)
         container.grid_rowconfigure(0, weight=1)
@@ -37,15 +32,11 @@ class MainRoot(Tk):
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
 
-            # put all of the pages in the same location;
-            # the one on the top of the stacking order
-            # will be the one that is visible.
             frame.grid(row=0, column=0, sticky="nsew")
 
         self.show_frame("PageOne")
 
     def show_frame(self, page_name):
-        '''Show a frame for the given page name'''
         frame = self.frames[page_name]
         frame.tkraise()
 
@@ -75,7 +66,6 @@ class PageOne(Frame):
             persons.clear()
             for entry in entriesVelocity:
                 persons.append(int(entry.get()))
-            print(persons)
 
         def init(*args):
             errorString = ""
@@ -84,11 +74,8 @@ class PageOne(Frame):
                 entry = entriesVelocity[i]
                 if not entry.get():
                     errorVelocity = errorVelocity + str(i + 1) + ","
-                else:
-                    print(entry.get())
 
             if errorVelocity != "":
-                print(errorVelocity)
                 errorVelocity = errorVelocity[:-1]
                 errorString = "Falta la velocidad: " + errorVelocity
             labelError["text"] = errorString
@@ -98,7 +85,7 @@ class PageOne(Frame):
                 controller.show_frame("PageTwo")
                 controller.create_persons()
 
-        buttonPrint = ttk.Button(self, text="Siguiente", command=init)
+        buttonNext = ttk.Button(self, text="Siguiente", command=init)
 
         def clearVelocity():
             for i in range(len(entriesVelocity)):
@@ -122,7 +109,7 @@ class PageOne(Frame):
                 labelsVelocity.append(labels[i])
             labelError.grid(row=(4 + quantity), column=0)
 
-            buttonPrint.grid(row=(5 + quantity), column=1)
+            buttonNext.grid(row=(5 + quantity), column=1)
 
         buttonCreate = ttk.Button(self, text="Crear", command=createVelocity)
         buttonCreate.grid(row=2, column=1)
@@ -184,7 +171,6 @@ class PageTwo(Frame):
         if quantity > 9:
             extra = (int((quantity - 9) / 3) * 30)
         height = 110 + extra
-        print(height)
         _canvas = Canvas(self, width=350, height=height)
 
         _canvas.create_text(50, 10, text="Lado Inseguro")
